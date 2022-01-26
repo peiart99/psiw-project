@@ -155,19 +155,23 @@ int main(void) {
     pthread_t thread[5];
 
     for (long int i = 0; i < 5; i++) {
-        sem_init(&forks[i], 0, 1);
+        if(sem_init(&forks[i], 0, 1) == -1) {
+            perror("Failed to create a fork semaphore");
+        }
     }
-    sem_init(&mutex, 0, 1);
+    if(sem_init(&mutex, 0, 1) == -1) {
+        perror("Failed to create the mutex semaphore");
+    }
 
     for(long int i = 0; i < 5; i++) {
         if(pthread_create(&thread[i], NULL, &chef, (void*)i) != 0) {
-            perror("Failed to create thread");
+            perror("Failed to create a cook thread");
         }
     }
 
     for(long int i = 0; i < 5; i++) {
         if(pthread_join(thread[i], NULL) != 0) {
-            perror("Failed to join thread");
+            perror("Failed to join a cook thread");
         }
     } 
     
